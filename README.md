@@ -1,45 +1,62 @@
 # GPThash
 
-> **Research Project: Long-Term Airborne Trajectory Sequence Prediction Based on Large Language Models**  
-> Undergraduate Innovation Training Program, University of Electronic Science and Technology of China (UESTC)  
-> Project No.: X202510614120 | Duration: Dec 2024 – Oct 2025  
+Long-term airborne trajectory prediction with trajectory tokenization + sequence models (Transformer / Mamba / LSTM).
 
-## 🚀 Overview
+This repository has been reorganized to separate source code, runnable scripts, and data files.
 
-This project investigates the application of large-model paradigms to the task of **long-term airborne trajectory prediction**. Inspired by advances in natural language processing, we propose a novel **"trajectory-as-language"** modeling framework, where continuous flight trajectories are discretized into token-like sequences and processed using self-attention mechanisms.
+## Project Structure
 
-The goal is to overcome the limitations of traditional recurrent models (e.g., LSTM) in capturing long-range spatiotemporal dependencies, thereby enabling more accurate, stable, and interpretable predictions for air traffic management, flight safety assurance, and anomaly detection.
+```
+GPThash/
+├─ src/                            # Core modules
+│  ├─ __init__.py
+│  ├─ config_trAISformer.py
+│  ├─ data_loader_HB_globel_v2.py
+│  ├─ Focal_loss.py
+│  ├─ Geohash3.py
+│  ├─ metrics.py
+│  ├─ models.py
+│  ├─ trainers.py
+│  └─ utils.py
+├─ scripts/                        # Entry scripts
+│  ├─ train.py
+│  ├─ train_token.py
+│  └─ test.py
+├─ data/                           # Dataset and tokenizer files
+│  ├─ quin33.sqlite
+│  └─ tokenizer_3D_7+1word_blur.json
+├─ results/                        # Model checkpoints / logs (generated)
+├─ testimg_global/                 # Evaluation figures (generated)
+└─ README.md
+```
 
-## 📌 Key Innovations
+## Quick Start
 
-- **Trajectory Language Modeling**: Flight coordinates (latitude, longitude, altitude) are discretized into symbolic tokens using an enhanced spatial encoding scheme, allowing trajectory sequences to be treated analogously to natural language.
-  
-- **Velocity Prompt Tokens**: We introduce a **velocity-aware prompting mechanism**, where recent velocity vectors (computed via finite differences over the last 10 time steps) are quantized and embedded as contextual prompts. This significantly enriches the model’s understanding of motion dynamics.
+Run commands from the repository root (`GPThash/`).
 
-- **Geohash3 Encoding with Altitude Integration**: An extended Geohash variant (**Geohash3**) incorporates altitude alongside horizontal coordinates, enabling unified 3D spatial discretization while preserving locality.
+1. Build / refresh tokenizer
 
-- **Positional Encoding Optimization**: Custom positional encodings are designed to better reflect the temporal and spatial structure of airborne trajectories, improving convergence and generalization.
+```bash
+python scripts/train_token.py
+```
 
-## 🔧 Usage Instructions
+The tokenizer will be saved to:
 
-To reproduce our pipeline:
+- `data/tokenizer_3D_7+1word_blur.json`
 
-1. **Build the tokenizer vocabulary**:  
-   Run `train_token.py` to generate the trajectory token dictionary (e.g., `tokenizer_3D_7+1word_blur.json`).  
-   ⚠️ Note: The output path (`save_path`) must be manually set inside `train_token.py` before execution.
+2. Train and evaluate
 
-2. **Train the prediction model**:  
-   After obtaining the tokenizer file, run `train.py` to train the Transformer-based trajectory prediction model. Ensure the tokenizer path is correctly specified in the training configuration.
+```bash
+python scripts/train.py --word_size 7+1_blur --model_select model_best_better_7+1word_blur.pt --token_select data/tokenizer_3D_7+1word_blur.json --epoch 10 --n_cuda 0 --batch_size 16 --n_embd 256 --n_head 8 --retrain
+```
 
-## 💡 Related Work & Inspiration
+## Notes
 
-This approach draws inspiration from [**trAISformer** (*"TrAISformer -- A Transformer Network with Sparse Augmented Data Representation and Cross Entropy Loss for AIS-based Vessel Trajectory Prediction"*, arXiv 2024)](https://arxiv.org/abs/2109.03958), which demonstrated the feasibility of applying Transformer architectures to maritime vessel trajectory forecasting via tokenization of Automatic Identification System (AIS) data. Building on this foundation, this work extends the paradigm to **3D aerial domains**, introduces **velocity prompting**, and enhances spatial encoding for aviation-specific challenges.
+- Default database path is now `data/quin33.sqlite`.
+- `scripts/train.py` resolves tokenizer paths relative to project root.
+- Model checkpoints are saved to `results/<base_model>/`.
+- Training logs are saved to `results/log/`.
 
-## 🙏 Acknowledgements
+## Acknowledgement
 
-We gratefully acknowledge the guidance of **Prof. Jing Liang** from the School of Information and Communication Engineering, UESTC. This project was supported by the **Undergraduate Innovation Training Program of UESTC**.
-
-## Author
-**Xiyao Chen** – Glasgow College, UESTC (BEng in Communication Engineering, Joint Program)
-
-> ✈️ *Enabling intelligent airspace through sequence modeling beyond language.*
+This project is inspired by trAISformer and extends trajectory tokenization to 3D airborne trajectories with velocity-aware modeling.
