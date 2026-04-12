@@ -1,5 +1,5 @@
-
-"""Configuration flags to run the main script.
+"""
+Configuration flags to run the main script.
 """
 
 import os
