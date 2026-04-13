@@ -1,3 +1,18 @@
+"""数据加载与处理模块
+
+本模块用于从 SQLite 飞行轨迹数据库中读取、预处理并转换飞行轨迹数据，供模型训练使用。
+
+主要功能：
+- `FlightPathDatabaseHandle`：连接并读取数据库中的飞行记录。
+- `resample_dataframe`：按固定时间间隔重采样并线性插值时间序列数据。
+- `convert_to_geohash`：将经度/纬度/高度编码为三维 geohash 表示（使用 `encode3`）。
+- `sliding_window`：对序列应用滑动窗口切分以生成训练样本。
+- `read_data` / `read_data_train_token`：构建并返回 tokenized 的训练/测试数据与速度序列。
+- `Dataset_flight`：封装为 PyTorch `Dataset` 以便与 `DataLoader` 一起使用。
+
+使用示例：
+    在训练脚本中调用 `read_data(database_path, max_len, seg_d, precision, token_select)` 获取训练/测试样本。
+"""
 import os
 import numpy as np
 import pandas as pd
