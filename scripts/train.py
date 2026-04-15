@@ -1,6 +1,5 @@
 """
-written by cxy
-as a alternation of trAISformer.py
+The main train file. Run this file to train the model and evaluate the performance. The training process will save the best model and the evaluation results will be saved in the results folder.
 """
 #!/usr/bin/env python
 # coding: utf-8
