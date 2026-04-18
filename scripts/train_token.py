@@ -1,3 +1,16 @@
+"""
+train_token.py
+
+Summary: Generate and train a WordLevel tokenizer for geohash tokens used
+in this project. The script reads geohash tokens from the dataset via
+`read_data_train_token`, de-duplicates short geohashes, expands them
+to longer variants, trains a HuggingFace `tokenizers` WordLevel model,
+and saves the tokenizer JSON to `data/tokenizer_3D_7+1word_blur.json`.
+
+Usage: run this script to (re)create the tokenizer file. Expects the
+database `data/quin33.sqlite` to be present under the project root.
+"""
+
 from pathlib import Path
 from src.data_loader_HB_globel_v2 import Dataset_flight, read_data, denormalize_arrays, read_data_train_token
 from torch.utils.data import Dataset, DataLoader
